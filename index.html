@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulk QR Labels: Bulk QR Codes from CSV with Label Sheet PDF</title>
+<meta name="description" content="Generate QR codes for an entire CSV, with filenames from your SKU or URL column, a print-ready label PDF, and an automatic decode-check that every code actually scans.">
+<meta name="keywords" content="bulk QR code generator from CSV, generate multiple QR codes at once free, QR codes from Excel spreadsheet ZIP, QR label sheet generator">
+<meta name="author" content="Amir Hussain"><meta name="robots" content="index, follow">
+<link rel="canonical" href="https://aamirtechs.github.io/bulk-qr-labels/"><link rel="icon" href="favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#0b1f3a">
+<meta property="og:type" content="website"><meta property="og:title" content="Bulk QR Labels: Bulk QR Codes from CSV with Label Sheet PDF"><meta property="og:description" content="Generate QR codes for an entire CSV, with filenames from your SKU or URL column, a print-ready label PDF, and an automatic decode-check that every code actually scans."><meta property="og:url" content="https://aamirtechs.github.io/bulk-qr-labels/">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="Bulk QR Labels: Bulk QR Codes from CSV with Label Sheet PDF"><meta name="twitter:description" content="Generate QR codes for an entire CSV, with filenames from your SKU or URL column, a print-ready label PDF, and an automatic decode-check that every code actually scans.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Bulk QR Labels","applicationCategory":"BusinessApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Amir Hussain","url":"https://aamirtechs.com"},"url":"https://aamirtechs.github.io/bulk-qr-labels/"}</script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b1f3a;--navy2:#122c50;--gold:#d4a72c;--ink:#16233a;--muted:#5a6a84;--line:#e3e9f2;--bg:#f6f8fb;--card:#ffffff}
+*{box-sizing:border-box}body{margin:0;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:48px 20px 36px;text-align:center}
+header h1{font-family:Sora,sans-serif;font-size:2.4rem;margin:0 0 10px}header h1 span{color:var(--gold)}
+header p{max-width:720px;margin:0 auto 16px;color:#dbe4f2}.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.stats span{border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;font-size:.85rem}
+main{max-width:980px;margin:0 auto;padding:28px 18px 48px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(11,31,58,.06)}
+label{font-weight:700;font-size:.9rem;display:block;margin:14px 0 6px}input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}
+textarea{min-height:130px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.row{grid-template-columns:1fr}}
+.btn-run{background:var(--gold);color:var(--navy);border:0;border-radius:10px;padding:13px 22px;font-weight:800;cursor:pointer;margin-top:18px;font-size:1rem}
+.btn-sec{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer;margin:14px 8px 0 0}
+#results{margin-top:18px;white-space:pre-wrap;font-size:.92rem}.err{color:#b91c1c}.ok{color:#15803d}
+section.info{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-top:22px}
+footer{background:var(--navy);color:#dbe4f2;text-align:center;padding:28px 18px;font-size:.92rem}footer a{color:var(--gold)}
+.privacy{color:var(--muted);font-size:.9rem;margin-top:12px}canvas{max-width:100%}
+</style></head><body>
+<header><h1>Bulk QR <span>Labels</span></h1><p>Generate QR codes for an entire CSV, with filenames from your SKU or URL column, a print-ready label PDF, and an automatic decode-check that every code actually scans.</p><div class="stats"><span>Free</span><span>100% in your browser</span><span>No sign-up</span></div></header>
+<main><div class="card">
+<label for="file">CSV or XLSX file</label><input type="file" id="file" accept=".csv,.xlsx,.xls">
+<label for="csv">Or paste CSV or one value per line</label><textarea id="csv">sku,url
+EXAMPLE-1,https://example.com/item-1
+EXAMPLE-2,https://example.com/item-2</textarea>
+<div class="row"><div><label>Encode column</label><select id="encCol"></select></div><div><label>Filename column</label><select id="fileCol"></select></div></div>
+<label for="tplText">URL template (optional, use {column} placeholders)</label><input id="tplText" placeholder="https://example.com/p/{sku}">
+<div class="row"><div><label>Error correction level</label><select id="ecc"><option>L</option><option selected>M</option><option>Q</option><option>H</option></select></div>
+<div><label>Label template</label><select id="tpl"><option value="avery5160">Avery 5160 (30 per sheet)</option><option value="avery6460">Avery 6460 (21 per sheet)</option><option value="square40">Square 40mm grid (24 per sheet)</option></select></div></div>
+<div class="row"><div><label>Logo overlay size percent (0 for none)</label><input type="number" id="logoPct" value="0" min="0" max="40"></div><div><label>Logo image (optional)</label><input type="file" id="logo" accept="image/*"></div></div>
+<button class="btn-run" id="run">Generate QR codes</button>
+<div id="results"></div><div id="preview"></div>
+<button class="btn-sec" id="zipBtn">Download PNG and SVG ZIP with manifest</button><button class="btn-sec" id="pdfBtn">Download label sheet PDF</button><button class="btn-sec" id="verifyBtn">Decode-verify all codes</button>
+<p class="privacy">Runs 100% in your browser. Your files never leave this device.</p>
+</div>
+<section class="info"><h2>How it works</h2><ul>
+<li>CSV, XLSX or a pasted list, with encode-column and filename-column mapping.</li>
+<li>URL templates with {column} placeholders build each code from a row.</li>
+<li>Pick an error-correction level, with a safe-size warning for logo overlays.</li>
+<li>Download a PNG and SVG ZIP with manifest.csv, or an Avery label-sheet PDF.</li>
+<li>Decode-verify a sample or every code with jsQR and get a failure report.</li></ul></section>
+</main><footer><p>Built by Amir Hussain, operations manager and founder of <a href="https://aamirtechs.com" target="_blank" rel="noopener">AamirTechs: operations, customer support and e-commerce services</a>.</p><p><a href="https://github.com/aamirtechs" target="_blank" rel="noopener">More open source tools on GitHub</a></p></footer>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="src/logic.js"></script>
+<script>
+const L=window.BulkQrLabels; let entries=[];
+function refreshCols(){ const p=L.rowsToObjects(document.getElementById('csv').value); const mk=(id,none)=>{ const s=document.getElementById(id); s.innerHTML=(none?'<option value="">(row number)</option>':'')+p.headers.map(h=>'<option>'+h+'</option>').join(''); }; mk('encCol',false); mk('fileCol',true); }
+document.getElementById('csv').addEventListener('input',refreshCols); refreshCols();
+document.getElementById('file').addEventListener('change',async e=>{ const f=e.target.files[0]; if(!f) return; if(f.name.match(/\.xlsx?$/i)&&window.XLSX){ const wb=XLSX.read(await f.arrayBuffer()); const ws=wb.Sheets[wb.SheetNames[0]]; document.getElementById('csv').value=XLSX.utils.sheet_to_csv(ws); } else document.getElementById('csv').value=await f.text(); refreshCols(); });
+function build(){ let text=document.getElementById('csv').value; let p=L.rowsToObjects(text); if(p.headers.length===1&&!text.includes(',')){ p={headers:['value'],rows:text.split(/\n/).filter(Boolean).map(v=>({value:v.trim()}))}; } const r=L.buildEntries(p.rows,document.getElementById('encCol').value,document.getElementById('fileCol').value,document.getElementById('tplText').value); entries=r.entries; return r; }
+function qrCanvas(content,size){ const ecc=document.getElementById('ecc').value; const qr=qrcode(0,ecc); qr.addData(content); qr.make(); const n=qr.getModuleCount(); const c=document.createElement('canvas'); const scale=Math.max(2,Math.floor(size/n)); c.width=n*scale; c.height=n*scale; const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height); ctx.fillStyle='#000'; for(let r=0;r<n;r++) for(let col=0;col<n;col++) if(qr.isDark(r,col)) ctx.fillRect(col*scale,r*scale,scale,scale); return c; }
+function qrSvg(content){ const ecc=document.getElementById('ecc').value; const qr=qrcode(0,ecc); qr.addData(content); qr.make(); return qr.createSvgTag({cellSize:4,margin:8,scalable:true}); }
+document.getElementById('run').addEventListener('click',()=>{ const r=build(); const warn=L.logoWarning(document.getElementById('logoPct').value,document.getElementById('ecc').value); document.getElementById('results').innerHTML='<span class="ok">'+r.entries.length+' QR codes ready.</span> Skipped empty rows: '+r.skipped.length+(warn?' <span class="err">'+warn+'</span>':''); document.getElementById('preview').innerHTML=''; entries.slice(0,12).forEach(e=>{ document.getElementById('preview').appendChild(qrCanvas(e.content,120)); }); });
+document.getElementById('zipBtn').addEventListener('click',async()=>{ build(); const zip=new JSZip(); entries.forEach(e=>{ zip.file(e.filename+'.png',qrCanvas(e.content,400).toDataURL('image/png').split(',')[1],{base64:true}); zip.file(e.filename+'.svg',qrSvg(e.content)); }); zip.file('manifest.csv',L.buildManifest(entries)); const blob=await zip.generateAsync({type:'blob'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='qr-codes.zip'; a.click(); });
+document.getElementById('pdfBtn').addEventListener('click',async()=>{ build(); const t=L.getQrTemplate(document.getElementById('tpl').value); const doc=await PDFLib.PDFDocument.create(); const font=await doc.embedFont(PDFLib.StandardFonts.Helvetica); const posAll=L.gridPositions(t); let page=null; for(let i=0;i<entries.length;i++){ const idx=i%posAll.length; if(idx===0) page=doc.addPage([L.mmToPt(t.pageW),L.mmToPt(t.pageH)]); const pos=posAll[idx]; const img=await doc.embedPng(qrCanvas(entries[i].content,300).toDataURL('image/png')); const side=Math.min(pos.w,pos.h-12); const yTop=L.mmToPt(t.pageH)-pos.y-pos.h; page.drawImage(img,{x:pos.x+(pos.w-side)/2,y:yTop+10,width:side,height:side}); page.drawText(entries[i].filename.slice(0,36),{x:pos.x+3,y:yTop+2,size:6,font}); } if(!entries.length) doc.addPage(); const bytes=await doc.save(); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})); a.download='qr-labels.pdf'; a.click(); });
+document.getElementById('verifyBtn').addEventListener('click',()=>{ build(); const results=entries.map(e=>{ const c=qrCanvas(e.content,300); const ctx=c.getContext('2d'); const d=ctx.getImageData(0,0,c.width,c.height); const found=jsQR(d.data,c.width,c.height); return {ok:!!(found&&found.data===e.content), filename:e.filename}; }); const s=L.verificationSummary(results); const fails=results.filter(r=>!r.ok).map(r=>r.filename).join(', '); document.getElementById('results').innerHTML='Decode check: '+s.passed+'/'+s.total+' passed.'+(fails?' <span class="err">Failed: '+fails+'</span>':' <span class="ok">All codes scan correctly.</span>'); });
+</script></body></html>

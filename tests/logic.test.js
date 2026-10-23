@@ -1,0 +1,13 @@
+"use strict";
+const test=require("node:test"); const assert=require("node:assert");
+const L=require("../src/logic.js");
+test("sanitizeFilename strips unsafe characters",()=>{ assert.strictEqual(L.sanitizeFilename("SKU 1001 / Blue!"),"sku-1001-blue"); assert.strictEqual(L.sanitizeFilename("   "),"qr-code"); assert.strictEqual(L.sanitizeFilename("a".repeat(80)).length,60); });
+test("applyTemplate substitutes column placeholders",()=>{ assert.strictEqual(L.applyTemplate("https://example.com/p/{sku}",{sku:"A-1"}),"https://example.com/p/A-1"); assert.strictEqual(L.applyTemplate("{a}-{b}",{a:"x"}),"x-{b}"); });
+test("CSV parse and object mapping",()=>{ const p=L.rowsToObjects('sku,url\nA1,"https://example.com/a,b"'); assert.strictEqual(p.rows[0].url,"https://example.com/a,b"); });
+test("buildEntries uses filename column and skips empty content",()=>{ const r=L.buildEntries([{sku:"A",url:"https://example.com/a"},{sku:"B",url:""}], "url","sku",""); assert.strictEqual(r.entries.length,1); assert.strictEqual(r.entries[0].filename,"a"); assert.strictEqual(r.skipped.length,1); });
+test("buildEntries applies URL template",()=>{ const r=L.buildEntries([{sku:"X9"}], "","sku","https://example.com/{sku}"); assert.strictEqual(r.entries[0].content,"https://example.com/X9"); });
+test("duplicate filenames are made unique",()=>{ assert.deepStrictEqual(L.uniqueFilenames(["a","a","a"]),["a","a-2","a-3"]); const r=L.buildEntries([{sku:"A",url:"u1"},{sku:"A",url:"u2"}],"url","sku",""); assert.deepStrictEqual(r.entries.map(e=>e.filename),["a","a-2"]); });
+test("manifest is valid CSV with header",()=>{ const m=L.buildManifest([{filename:"a",content:"https://example.com/x,y"}]); assert.ok(m.startsWith("filename,content,status\n")); assert.ok(m.includes('"https://example.com/x,y"')); });
+test("label geometry for Avery 5160 and square grid",()=>{ assert.strictEqual(L.labelsPerSheet(L.getQrTemplate("avery5160")),30); assert.strictEqual(L.labelsPerSheet(L.getQrTemplate("square40")),24); assert.strictEqual(L.gridPositions(L.getQrTemplate("square40")).length,24); assert.deepStrictEqual(L.planPages(25,L.getQrTemplate("avery5160")),{perSheet:30,pages:1}); });
+test("error correction validation and logo warning",()=>{ assert.strictEqual(L.validateEcc("h"),"H"); assert.strictEqual(L.validateEcc("Z"),null); assert.ok(L.logoWarning(30,"M")); assert.strictEqual(L.logoWarning(10,"M"),null); });
+test("verification summary counts pass and fail",()=>{ assert.deepStrictEqual(L.verificationSummary([{ok:true},{ok:false},{ok:true}]),{total:3,passed:2,failed:1,allPassed:false}); });
